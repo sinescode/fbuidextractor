@@ -159,7 +159,8 @@
                 </div>
             </div>
 
-            <!-- Right Column: Config + Terminal -->
+            <!-- Right Column: Terminal / Logs -->
+       
 
         </div>
         
@@ -171,7 +172,7 @@
 
     </main>
 
-    <script>
+       <script>
         // --- Clock Logic ---
         function updateClock() {
             const now = new Date();
@@ -179,22 +180,55 @@
             document.getElementById('clock').textContent = timeString;
         }
 
-        // --- Uptime Logic ---
-        const startTime = Date.now();
+        // --- Global Uptime Logic (Server Based) ---
+        let serverStartTime = null;
+
+        async function initUptime() {
+            try {
+                // 1. Ask the backend when the process started
+                const response = await fetch('/api/stats');
+                const data = await response.json();
+                
+                // 2. Save that time
+                serverStartTime = data.start_time * 1000; // Convert seconds to milliseconds
+                
+                // 3. Force an immediate update so we don't wait 1 second for the first tick
+                updateUptime();
+            } catch (error) {
+                console.error("Could not fetch server time:", error);
+                document.getElementById('uptime').textContent = "ERR";
+            }
+        }
+
         function updateUptime() {
-            const diff = Date.now() - startTime;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
+            if (!serverStartTime) return;
+
+            // Calculate difference based on SERVER time, not user's browser
+            const diff = Date.now() - serverStartTime;
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
             
             const pad = (num) => num.toString().padStart(2, '0');
-            document.getElementById('uptime').textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+            
+            // Format: DD:HH:MM:SS (If you want just HH:MM:SS, remove the days part)
+            let uptimeString = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+            
+            // Optional: Show days if uptime > 24 hours
+            if (days > 0) {
+                uptimeString = `${days}d ${uptimeString}`;
+            }
+
+            document.getElementById('uptime').textContent = uptimeString;
         }
 
+        // Initialize everything
+        initUptime(); // Ask server for time immediately
         setInterval(updateClock, 1000);
         setInterval(updateUptime, 1000);
         updateClock();
-        updateUptime();
 
         // --- Live Terminal Simulation ---
         const logs = [
@@ -206,17 +240,16 @@
             { type: 'info', text: 'Keepalive signal sent to port 10000.' },
             { type: 'warn', text: 'Optimizing memory usage...' },
             { type: 'process', text: 'Scanning network traffic...' },
-            { type: 'success', text: 'System secure.' }
+            { type: 'success', text: 'System secure.' },
+            { type: 'info', text: 'Heartbeat: 60ms' }
         ];
 
         const terminal = document.getElementById('terminal-content');
-        let logIndex = 0;
-
+        
         function addLog() {
             const logData = logs[Math.floor(Math.random() * logs.length)];
             const div = document.createElement('div');
             
-            // Get timestamp for log
             const now = new Date();
             const ts = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
             
@@ -228,18 +261,14 @@
             div.innerHTML = `<span class="text-slate-600 mr-2">[${ts}]</span> <span class="${colorClass}">${logData.text}</span>`;
             
             terminal.appendChild(div);
-            
-            // Auto scroll to bottom
             terminal.scrollTop = terminal.scrollHeight;
 
-            // Keep DOM light (remove old logs if too many)
-            if (terminal.children.length > 20) {
+            if (terminal.children.length > 30) {
                 terminal.removeChild(terminal.firstChild);
             }
         }
 
-        // Add a log immediately then randomly
-        
+        addLog(); 
         setInterval(addLog, 2500);
     </script>
 </body>
