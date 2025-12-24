@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Bot Status | FB Data Manager</title>
+    <!-- Using the exact Tailwind v4 CDN you requested -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(30, 41, 59, 0.6);
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0f172a;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        
+        /* Refined Grid Background */
+        .bg-grid {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+        }
+
+        /* Glassmorphism Card */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Custom Scrollbar for Terminal */
+        .terminal-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+        .terminal-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb {
+            background: rgba(34, 211, 238, 0.3);
+            border-radius: 2px;
+        }
+        .terminal-scroll::-webkit-scrollbar-thumb:hover {
+            background: rgba(34, 211, 238, 0.5);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Glowing Text */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
+        }
+    </style>
+</head>
+<body class="text-white min-h-screen flex items-center justify-center relative overflow-hidden bg-grid selection:bg-cyan-500 selection:text-white p-4">
+
+    <!-- Ambient Lighting -->
+    <div class="fixed inset-0 pointer-events-none -z-10">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-cyan-600/20 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-indigo-600/20 rounded-full blur-[100px]"></div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <main class="w-full max-w-5xl animate-float">
+        
+        <!-- Header -->
+        <header class="glass-panel rounded-2xl p-4 md:p-6 mb-4 md:mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20 shrink-0">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                    </svg>
+                </div>
+                <div class="text-center md:text-left">
+                    <h1 class="text-xl md:text-2xl font-bold tracking-tight text-white">FB Data Manager</h1>
+                    <p class="text-xs md:text-sm text-slate-400">System Status & Overview</p>
+                </div>
+            </div>
+            
+            <!-- Status Badge -->
+            <div class="w-full md:w-auto flex justify-center">
+                <div class="glass-panel px-6 py-2.5 rounded-full flex items-center gap-2.5 bg-emerald-900/10 border-emerald-500/20">
+                    <span class="relative flex h-3 w-3">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></span>
+                    </span>
+                    <span class="text-sm font-bold text-emerald-400 tracking-wide">SYSTEM ONLINE</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+            
+            <!-- Main Stats Card (Spans 2 columns on large screens) -->
+            <div class="glass-panel rounded-2xl p-6 lg:col-span-2 flex flex-col h-full relative overflow-hidden group">
+                <div class="flex items-center justify-between mb-6 z-10">
+                    <h2 class="text-lg font-semibold text-slate-200 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        Live Metrics
+                    </h2>
+                    <div class="flex gap-2">
+                        <span class="w-2 h-2 rounded-full bg-cyan-500 animate-pulse"></span>
+                        <span class="w-2 h-2 rounded-full bg-indigo-500 animate-pulse delay-75"></span>
+                    </div>
+                </div>
+                
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 z-10 mb-8">
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-700/30">
+                        <p class="text-xs uppercase tracking-widest text-slate-500 mb-2 font-semibold">Server Time</p>
+                        <p id="clock" class="text-3xl sm:text-4xl font-mono font-bold text-white tracking-tight text-glow">00:00:00</p>
+                    </div>
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-700/30">
+                        <p class="text-xs uppercase tracking-widest text-slate-500 mb-2 font-semibold">Session Uptime</p>
+                        <p id="uptime" class="text-3xl sm:text-4xl font-mono font-bold text-cyan-400 tracking-tight">00:00:00</p>
+                    </div>
+                </div>
+
+                <!-- Activity Graph -->
+                <div class="mt-auto z-10">
+                    <div class="flex justify-between text-xs text-slate-500 mb-3 font-mono">
+                        <span>CPU LOAD</span>
+                        <span>NETWORK I/O</span>
+                    </div>
+                    <!-- Graph Bars -->
+                    <div class="flex items-end justify-between gap-1 h-16 w-full">
+                        <!-- Generating 20 bars for smoother look -->
+                        <div class="w-full bg-cyan-500/20 rounded-t-sm h-[30%] hover:bg-cyan-500/40 transition-colors"></div>
+                        <div class="w-full bg-cyan-500/30 rounded-t-sm h-[50%] hover:bg-cyan-500/50 transition-colors"></div>
+                        <div class="w-full bg-cyan-500/40 rounded-t-sm h-[45%] hover:bg-cyan-500/60 transition-colors"></div>
+                        <div class="w-full bg-cyan-500/50 rounded-t-sm h-[70%] hover:bg-cyan-500/70 transition-colors"></div>
+                        <div class="w-full bg-cyan-500/60 rounded-t-sm h-[60%] hover:bg-cyan-500/80 transition-colors"></div>
+                        <div class="w-full bg-cyan-500/50 rounded-t-sm h-[80%] hover:bg-cyan-500/70 transition-colors"></div>
+                        <div class="w-full bg-indigo-500/40 rounded-t-sm h-[55%] hover:bg-indigo-500/60 transition-colors"></div>
+                        <div class="w-full bg-indigo-500/50 rounded-t-sm h-[65%] hover:bg-indigo-500/70 transition-colors"></div>
+                        <div class="w-full bg-indigo-500/60 rounded-t-sm h-[90%] hover:bg-indigo-500/80 transition-colors"></div>
+                        <div class="w-full bg-indigo-500/50 rounded-t-sm h-[40%] hover:bg-indigo-500/70 transition-colors"></div>
+                        <div class="w-full bg-cyan-500/30 rounded-t-sm h-[50%] hover:bg-cyan-500/50 transition-colors"></div>
+                        <div class="w-full bg-cyan-500/20 rounded-t-sm h-[35%] hover:bg-cyan-500/40 transition-colors"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Config + Terminal -->
+
+        </div>
+        
+        <footer class="mt-6 text-center">
+            <p class="text-[10px] text-slate-600 font-mono tracking-widest uppercase opacity-60">
+                Secure Connection • Uptime Monitor • FB Data Manager
+            </p>
+        </footer>
+
+    </main>
+
+    <script>
+        // --- Clock Logic ---
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
+            document.getElementById('clock').textContent = timeString;
+        }
+
+        // --- Uptime Logic ---
+        const startTime = Date.now();
+        function updateUptime() {
+            const diff = Date.now() - startTime;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            const pad = (num) => num.toString().padStart(2, '0');
+            document.getElementById('uptime').textContent = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+
+        setInterval(updateClock, 1000);
+        setInterval(updateUptime, 1000);
+        updateClock();
+        updateUptime();
+
+        // --- Live Terminal Simulation ---
+        const logs = [
+            { type: 'info', text: 'Connected to Telegram API...' },
+            { type: 'success', text: 'Polling started successfully.' },
+            { type: 'info', text: 'Listening for JSON uploads...' },
+            { type: 'process', text: 'Checking database integrity...' },
+            { type: 'success', text: 'Database OK.' },
+            { type: 'info', text: 'Keepalive signal sent to port 10000.' },
+            { type: 'warn', text: 'Optimizing memory usage...' },
+            { type: 'process', text: 'Scanning network traffic...' },
+            { type: 'success', text: 'System secure.' }
+        ];
+
+        const terminal = document.getElementById('terminal-content');
+        let logIndex = 0;
+
+        function addLog() {
+            const logData = logs[Math.floor(Math.random() * logs.length)];
+            const div = document.createElement('div');
+            
+            // Get timestamp for log
+            const now = new Date();
+            const ts = now.toLocaleTimeString('en-US', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
+            
+            let colorClass = 'text-slate-400';
+            if (logData.type === 'success') colorClass = 'text-emerald-400';
+            if (logData.type === 'warn') colorClass = 'text-yellow-400';
+            if (logData.type === 'process') colorClass = 'text-cyan-400';
+
+            div.innerHTML = `<span class="text-slate-600 mr-2">[${ts}]</span> <span class="${colorClass}">${logData.text}</span>`;
+            
+            terminal.appendChild(div);
+            
+            // Auto scroll to bottom
+            terminal.scrollTop = terminal.scrollHeight;
+
+            // Keep DOM light (remove old logs if too many)
+            if (terminal.children.length > 20) {
+                terminal.removeChild(terminal.firstChild);
+            }
+        }
+
+        // Add a log immediately then randomly
+        
+        setInterval(addLog, 2500);
+    </script>
+</body>
+</html>
